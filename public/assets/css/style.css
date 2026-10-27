@@ -1,0 +1,116 @@
+:root {
+    --pcc-primary: #2c3e50;
+    --pcc-secondary: #8e44ad;
+    --pcc-accent: #d35400;
+    --pcc-light: #f8f9fa;
+    --pcc-dark: #1a252f;
+    --pcc-gold: #f39c12;
+    --pcc-board-light: #f0d9b5;
+    --pcc-board-dark: #b58863;
+}
+
+body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background-color: #f4f6f9;
+    color: #333;
+}
+
+.navbar-pcc {
+    background: linear-gradient(135deg, #1a252f 0%, #2c3e50 100%);
+    border-bottom: 3px solid var(--pcc-gold);
+}
+
+.pcc-brand-title {
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: #fff;
+}
+
+.pcc-card {
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    background: #fff;
+    margin-bottom: 1.5rem;
+}
+
+.pcc-card-header {
+    background-color: #fff;
+    border-bottom: 2px solid #edf2f7;
+    font-weight: 600;
+    padding: 1rem 1.25rem;
+    border-radius: 8px 8px 0 0 !important;
+}
+
+.board-badge {
+    background: var(--pcc-primary);
+    color: #fff;
+    font-weight: 700;
+    width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.champion-card {
+    background: linear-gradient(135deg, #fff9e6 0%, #fff3cd 100%);
+    border: 2px solid var(--pcc-gold);
+}
+
+/* Chess subtle board watermark or accent */
+.chess-accent-border {
+    border-left: 4px solid var(--pcc-gold);
+}
+
+/* Print CSS Stylesheet */
+@media print {
+    body {
+        background: #fff !important;
+        color: #000 !important;
+        font-size: 12pt;
+    }
+
+    .no-print, .navbar, .btn, footer, .modal, .alert {
+        display: none !important;
+    }
+
+    .container, .container-fluid {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    .card {
+        border: none !important;
+        box-shadow: none !important;
+    }
+
+    .table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+    }
+
+    .table th, .table td {
+        border: 1px solid #000 !important;
+        padding: 6px !important;
+    }
+
+    .print-header {
+        display: block !important;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .print-header h2 {
+        margin: 0;
+        font-size: 18pt;
+    }
+
+    @page {
+        size: A4 portrait;
+        margin: 1.5cm;
+    }
+}
