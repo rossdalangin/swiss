@@ -2,6 +2,12 @@
 
 A complete, secure, browser-based Swiss-System Chess Tournament Management System custom-built for the Paete Chess Club in Paete, Laguna, Philippines.
 
+## Documentation & SOP References
+- 📖 [Standard Operating Procedures (SOP) & Tournament Manual](docs/SOP_MANUAL.md)
+- 🎓 [Volunteer Arbiter Step-by-Step Tutorial & Training Guide](docs/ARBITER_TUTORIAL.md)
+
+---
+
 ## Technology Stack
 - **Backend**: PHP 8.2+ (Clean MVC & Service Pattern)
 - **Database Access**: PDO with Prepared Statements (MySQL 8.0+ / MariaDB and SQLite3 fallback for local testing)
@@ -46,6 +52,9 @@ chess-tournament/
         schema.sql          # MySQL / MariaDB schema
         schema_sqlite.sql   # SQLite schema
         seed.sql            # Seed data (Default admin account)
+    docs/
+        SOP_MANUAL.md       # Official Standard Operating Procedures & Rules
+        ARBITER_TUTORIAL.md # Step-by-Step Training Guide for Volunteer Arbiters
     public/
         index.php           # Front Controller & Router
         assets/

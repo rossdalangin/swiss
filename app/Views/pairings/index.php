@@ -18,8 +18,8 @@ $error = $_GET['error'] ?? null;
                 <i class="fa-solid fa-play me-1"></i> Generate Round <?= $tournament['current_round'] + 1 ?>
             </a>
         <?php endif; ?>
-        <button onclick="window.print()" class="btn btn-secondary me-1"><i class="fa-solid fa-print me-1"></i> Print Pairings</button>
-        <a href="?route=standings&tournament_id=<?= $tournament['id'] ?>" class="btn btn-outline-dark"><i class="fa-solid fa-list-ol me-1"></i> Standings</a>
+        <button onclick="window.print()" class="btn btn-secondary me-1"><i class="fa-solid fa-print me-1"></i> Print Board Pairings</button>
+        <a href="?route=standings&tournament_id=<?= $tournament['id'] ?>" class="btn btn-outline-dark"><i class="fa-solid fa-list-ol me-1"></i> View Standings</a>
     </div>
 </div>
 
@@ -29,6 +29,21 @@ $error = $_GET['error'] ?? null;
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
 <?php endif; ?>
+
+<!-- Arbiter Operating Notes Banner -->
+<div class="alert alert-dark border-0 shadow-sm mb-4 no-print">
+    <div class="d-flex align-items-start">
+        <i class="fa-solid fa-clipboard-check text-warning fa-lg me-3 mt-1"></i>
+        <div>
+            <strong class="text-warning">Arbiter Standard Operating Procedure (SOP):</strong>
+            <ul class="mb-0 small text-white-50 ps-3">
+                <li>Verify match result slips signed by both players before clicking <strong>Result</strong> button.</li>
+                <li>Distinguish between played wins (<code>1-0</code> or <code>0-1</code>) and forfeit wins (<code>1-0F</code> or <code>0-1F</code>). Forfeit wins award 1.0 tournament point but do NOT count as a played game for Buchholz/tiebreak adjustments.</li>
+                <li>All result corrections require an explicit reason note which is recorded permanently in the audit trail.</li>
+            </ul>
+        </div>
+    </div>
+</div>
 
 <!-- Round Navigation Pills -->
 <div class="mb-4 no-print">
@@ -105,9 +120,9 @@ $error = $_GET['error'] ?? null;
                                         <?php if ($p['result'] === 'pending'): ?>
                                             <span class="badge bg-secondary fs-6"><i class="fa-regular fa-clock me-1"></i> Pending</span>
                                         <?php elseif ($p['result'] === '1-0' || $p['result'] === '1-0F'): ?>
-                                            <span class="badge bg-success fs-6">1 - 0</span>
+                                            <span class="badge bg-success fs-6">1 - 0 <?= ($p['result'] === '1-0F') ? '(Forfeit)' : '' ?></span>
                                         <?php elseif ($p['result'] === '0-1' || $p['result'] === '0-1F'): ?>
-                                            <span class="badge bg-success fs-6">0 - 1</span>
+                                            <span class="badge bg-success fs-6">0 - 1 <?= ($p['result'] === '0-1F') ? '(Forfeit)' : '' ?></span>
                                         <?php elseif (in_array($p['result'], ['1/2-1/2', '0.5-0.5', '½-½'])): ?>
                                             <span class="badge bg-info text-dark fs-6">½ - ½</span>
                                         <?php else: ?>
@@ -133,7 +148,7 @@ $error = $_GET['error'] ?? null;
                                                 <input type="hidden" name="pairing_id" value="<?= $p['id'] ?>">
 
                                                 <div class="modal-header bg-dark text-white">
-                                                    <h5 class="modal-title"><i class="fa-solid fa-chess-board me-2 text-warning"></i> Board <?= $p['board_number'] ?> Match Result</h5>
+                                                    <h5 class="modal-title"><i class="fa-solid fa-chess-board me-2 text-warning"></i> Board <?= $p['board_number'] ?> Result</h5>
                                                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                                                 </div>
                                                 <div class="modal-body">
@@ -151,19 +166,19 @@ $error = $_GET['error'] ?? null;
                                                     <label class="form-label fw-bold mb-2">Select Game Result:</label>
                                                     <div class="d-grid gap-2">
                                                         <input type="radio" class="btn-check" name="result" id="res_w<?= $p['id'] ?>" value="1-0" <?= ($p['result'] === '1-0') ? 'checked' : '' ?> required>
-                                                        <label class="btn btn-outline-success text-start fw-bold" for="res_w<?= $p['id'] ?>"><i class="fa-solid fa-trophy me-2"></i> 1 - 0 (White Wins)</label>
+                                                        <label class="btn btn-outline-success text-start fw-bold" for="res_w<?= $p['id'] ?>"><i class="fa-solid fa-trophy me-2"></i> 1 - 0 (White Wins Played Game)</label>
 
                                                         <input type="radio" class="btn-check" name="result" id="res_d<?= $p['id'] ?>" value="1/2-1/2" <?= (in_array($p['result'], ['1/2-1/2', '0.5-0.5', '½-½'])) ? 'checked' : '' ?>>
                                                         <label class="btn btn-outline-info text-dark text-start fw-bold" for="res_d<?= $p['id'] ?>"><i class="fa-solid fa-handshake me-2"></i> ½ - ½ (Draw)</label>
 
                                                         <input type="radio" class="btn-check" name="result" id="res_b<?= $p['id'] ?>" value="0-1" <?= ($p['result'] === '0-1') ? 'checked' : '' ?>>
-                                                        <label class="btn btn-outline-primary text-start fw-bold" for="res_b<?= $p['id'] ?>"><i class="fa-solid fa-trophy me-2"></i> 0 - 1 (Black Wins)</label>
+                                                        <label class="btn btn-outline-primary text-start fw-bold" for="res_b<?= $p['id'] ?>"><i class="fa-solid fa-trophy me-2"></i> 0 - 1 (Black Wins Played Game)</label>
 
                                                         <input type="radio" class="btn-check" name="result" id="res_wf<?= $p['id'] ?>" value="1-0F" <?= ($p['result'] === '1-0F') ? 'checked' : '' ?>>
-                                                        <label class="btn btn-outline-secondary text-start" for="res_wf<?= $p['id'] ?>"><i class="fa-solid fa-flag me-2"></i> 1 - 0F (White Wins by Forfeit)</label>
+                                                        <label class="btn btn-outline-secondary text-start" for="res_wf<?= $p['id'] ?>"><i class="fa-solid fa-flag me-2"></i> 1 - 0F (White Wins by Forfeit - No Game Played)</label>
 
                                                         <input type="radio" class="btn-check" name="result" id="res_bf<?= $p['id'] ?>" value="0-1F" <?= ($p['result'] === '0-1F') ? 'checked' : '' ?>>
-                                                        <label class="btn btn-outline-secondary text-start" for="res_bf<?= $p['id'] ?>"><i class="fa-solid fa-flag me-2"></i> 0 - 1F (Black Wins by Forfeit)</label>
+                                                        <label class="btn btn-outline-secondary text-start" for="res_bf<?= $p['id'] ?>"><i class="fa-solid fa-flag me-2"></i> 0 - 1F (Black Wins by Forfeit - No Game Played)</label>
 
                                                         <input type="radio" class="btn-check" name="result" id="res_df<?= $p['id'] ?>" value="0-0F" <?= ($p['result'] === '0-0F') ? 'checked' : '' ?>>
                                                         <label class="btn btn-outline-danger text-start" for="res_df<?= $p['id'] ?>"><i class="fa-solid fa-ban me-2"></i> 0 - 0F (Double Forfeit)</label>
@@ -171,14 +186,14 @@ $error = $_GET['error'] ?? null;
 
                                                     <?php if ($p['result'] !== 'pending'): ?>
                                                         <div class="mt-3">
-                                                            <label for="reason<?= $p['id'] ?>" class="form-label text-danger small fw-bold">Result Edit Reason (Audit Log):</label>
-                                                            <input type="text" class="form-control form-control-sm" id="reason<?= $p['id'] ?>" name="admin_reason" placeholder="e.g. Correcting score input error">
+                                                            <label for="reason<?= $p['id'] ?>" class="form-label text-danger small fw-bold">Result Edit Reason (Audit Trail):</label>
+                                                            <input type="text" class="form-control form-control-sm" id="reason<?= $p['id'] ?>" name="admin_reason" placeholder="e.g. Correcting match result input error">
                                                         </div>
                                                     <?php endif; ?>
                                                 </div>
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                                    <button type="submit" class="btn btn-success fw-bold"><i class="fa-solid fa-floppy-disk me-1"></i> Save Result</button>
+                                                    <button type="submit" class="btn btn-success fw-bold"><i class="fa-solid fa-floppy-disk me-1"></i> Confirm & Save Result</button>
                                                 </div>
                                             </form>
                                         </div>

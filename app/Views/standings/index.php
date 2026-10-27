@@ -17,6 +17,22 @@ require __DIR__ . '/../layouts/header.php';
     </div>
 </div>
 
+<!-- Tiebreak Methodology Reference Box -->
+<div class="alert alert-info border-0 shadow-sm mb-4 no-print">
+    <div class="d-flex align-items-start">
+        <i class="fa-solid fa-calculator text-info fa-lg me-3 mt-1"></i>
+        <div>
+            <strong>Tiebreak Calculation Rules & Methodology:</strong>
+            <p class="mb-0 small text-dark">
+                • <strong>Buchholz Cut-1 (BH-C1):</strong> Sum of opponents' final tournament scores, excluding the lowest-scoring opponent.<br>
+                • <strong>Buchholz (BH):</strong> Total sum of all opponents' final scores.<br>
+                • <strong>Sonneborn-Berger (SB):</strong> Sum of defeated opponents' scores plus half of drawn opponents' scores.<br>
+                • <strong>Progressive Score (PS):</strong> Cumulative sum of tournament score at the end of each round.
+            </p>
+        </div>
+    </div>
+</div>
+
 <!-- Champion / Podium Display if Completed -->
 <?php if (!empty($standings) && $tournament['status'] === 'Completed'): ?>
     <div class="card pcc-card champion-card mb-4 p-4 text-center">
@@ -70,7 +86,7 @@ require __DIR__ . '/../layouts/header.php';
                         <th>L</th>
                         <th>Byes</th>
                         <th>Points</th>
-                        <th>Buchholz Cut-1</th>
+                        <th>BH Cut-1</th>
                         <th>Buchholz</th>
                         <th>Sonneborn-Berger</th>
                         <th>Progressive</th>
