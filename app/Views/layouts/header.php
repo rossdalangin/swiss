@@ -46,6 +46,9 @@ $currentRoute = $_GET['route'] ?? 'dashboard';
                     <li class="nav-item">
                         <a class="nav-link <?= str_starts_with($currentRoute, 'standings') ? 'active' : '' ?>" href="?route=standings"><i class="fa-solid fa-list-ol me-1"></i> Standings</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link <?= str_starts_with($currentRoute, 'settings') ? 'active' : '' ?>" href="?route=settings"><i class="fa-solid fa-gear me-1"></i> Settings</a>
+                    </li>
                 </ul>
                 <div class="d-flex align-items-center text-white me-3">
                     <i class="fa-solid fa-user-shield me-2 text-warning"></i>

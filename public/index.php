@@ -22,6 +22,7 @@ use App\Controllers\PlayerController;
 use App\Controllers\PairingController;
 use App\Controllers\StandingsController;
 use App\Controllers\ExportController;
+use App\Controllers\SettingsController;
 
 $route = $_GET['route'] ?? 'dashboard';
 
@@ -82,6 +83,12 @@ switch ($route) {
         break;
     case 'export/players':
         (new ExportController())->exportPlayers();
+        break;
+    case 'settings':
+        (new SettingsController())->index();
+        break;
+    case 'settings/update_profile':
+        (new SettingsController())->updateProfile();
         break;
     default:
         header("HTTP/1.0 404 Not Found");

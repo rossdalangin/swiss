@@ -11,8 +11,9 @@ class AuditLogger {
         $this->db = $db ?? Database::getInstance();
     }
 
-    public function log(?int $tournamentId, ?int $userId, string $action, string $details): void {
-        $stmt = $this->db->prepare("INSERT INTO audit_logs (tournament_id, user_id, action, details) VALUES (:t_id, :u_id, :action, :details)");
+    public static function log(?int $tournamentId, ?int $userId, string $action, string $details): void {
+        $db = Database::getInstance();
+        $stmt = $db->prepare("INSERT INTO audit_logs (tournament_id, user_id, action, details) VALUES (:t_id, :u_id, :action, :details)");
         $stmt->execute([
             ':t_id' => $tournamentId,
             ':u_id' => $userId,
