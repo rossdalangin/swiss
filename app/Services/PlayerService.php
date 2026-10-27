@@ -136,7 +136,13 @@ class PlayerService {
             throw new InvalidArgumentException("Cannot add players to a completed or archived tournament.");
         }
 
-        $stmt = $this->db->prepare("INSERT OR IGNORE INTO tournament_players (tournament_id, player_id, local_pairing_value) VALUES (:t_id, :p_id, :lpv)");
+        $driver = $this->db->getAttribute(PDO::ATTR_DRIVER_NAME);
+        if ($driver === 'sqlite') {
+            $sql = "INSERT OR IGNORE INTO tournament_players (tournament_id, player_id, local_pairing_value) VALUES (:t_id, :p_id, :lpv)";
+        } else {
+            $sql = "INSERT IGNORE INTO tournament_players (tournament_id, player_id, local_pairing_value) VALUES (:t_id, :p_id, :lpv)";
+        }
+        $stmt = $this->db->prepare($sql);
         return $stmt->execute([':t_id' => $tournamentId, ':p_id' => $playerId, ':lpv' => $localPairingValue]);
     }
 
