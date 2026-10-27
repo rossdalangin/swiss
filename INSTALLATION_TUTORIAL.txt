@@ -1,0 +1,192 @@
+================================================================================
+ PAETE CHESS CLUB - SWISS TOURNAMENT MANAGEMENT SYSTEM
+ COMPLETE INSTALLATION TUTORIAL (LOCALHOST & CPANEL HOSTING)
+================================================================================
+
+This tutorial provides complete, step-by-step instructions for installing and
+configuring the Paete Chess Club Tournament Manager on:
+  PART 1: Local Development Server (Localhost via XAMPP / WAMP / PHP CLI)
+  PART 2: Production Shared Web Hosting (cPanel with MySQL/MariaDB)
+
+--------------------------------------------------------------------------------
+SYSTEM REQUIREMENTS
+--------------------------------------------------------------------------------
+- PHP Version: 8.2 or higher
+- Database: MySQL 8.0+, MariaDB 10.3+, or SQLite3
+- PHP Extensions Required: pdo, pdo_mysql (or pdo_sqlite), ctype, json, mbstring
+- Web Server: Apache with mod_rewrite or PHP built-in web server
+- Timezone: Asia/Manila
+
+================================================================================
+PART 1: LOCALHOST INSTALLATION (WINDOWS / MAC / LINUX)
+================================================================================
+
+--- METHOD A: USING PHP BUILT-IN SERVER & SQLITE (FASTEST FOR TESTING) ---
+
+1. DOWNLOAD / EXTRACT FILES:
+   Place the project folder into your preferred local directory, e.g.:
+   C:\projects\chess-tournament\
+
+2. NO DATABASE SETUP NEEDED FOR SQLITE:
+   The application is pre-configured with SQLite support in `config/database.php`.
+   The database file will automatically be initialized under `storage/database.sqlite`.
+
+3. START THE LOCAL DEVELOPMENT SERVER:
+   Open Command Prompt / Terminal in the project root and run:
+
+   php -S 127.0.0.1:8000 -t public/
+
+4. ACCESS THE APPLICATION:
+   Open your web browser and navigate to:
+   http://localhost:8000
+
+5. DEFAULT ARBITER LOGIN CREDENTIALS:
+   Username: admin
+   Password: admin123
+
+
+--- METHOD B: USING XAMPP / WAMP / MAMP (WITH MYSQL) ---
+
+1. PLACE APPLICATION IN WEB ROOT:
+   Copy the `chess-tournament` folder into your web server root directory:
+   - XAMPP: C:\xampp\htdocs\chess-tournament\
+   - WAMP:  C:\wamp64\www\chess-tournament\
+   - MAMP:  /Applications/MAMP/htdocs/chess-tournament/
+
+2. CREATE THE MYSQL DATABASE VIA PHPMYADMIN:
+   a. Open http://localhost/phpmyadmin/ in your browser.
+   b. Click "Databases" -> Create a new database named `paete_chess`.
+   c. Select `paete_chess`, click the "Import" tab.
+   d. Click "Choose File" and select `database/schema.sql` from the project.
+   e. Click "Go" to execute the SQL script.
+   f. (Optional) Import `database/seed.sql` to populate sample tournament data.
+
+3. CONFIGURE DATABASE CONNECTION:
+   Open `config/database.php` in a text editor and set the MySQL credentials:
+
+   'db' => [
+       'driver' => 'mysql',
+       'host' => '127.0.0.1',
+       'port' => 3306,
+       'dbname' => 'paete_chess',
+       'user' => 'root',
+       'pass' => '', // Leave empty for default XAMPP, or your MySQL password
+   ]
+
+4. ACCESS THE APPLICATION:
+   Navigate to:
+   http://localhost/chess-tournament/public/
+
+5. ARBITER LOG IN:
+   Username: admin
+   Password: admin123
+
+
+================================================================================
+PART 2: CPANEL SHARED HOSTING DEPLOYMENT
+================================================================================
+
+Follow these steps to deploy the application to a live cPanel web hosting account.
+
+--------------------------------------------------------------------------------
+STEP 1: CREATE MYSQL DATABASE IN CPANEL
+--------------------------------------------------------------------------------
+1. Log in to your cPanel dashboard (e.g. https://yourdomain.com:2083).
+2. Under "Databases", click "MySQL Database Wizard".
+3. Step 1 (New Database): Enter database name (e.g., `paeteche_db`) and click Next.
+4. Step 2 (Create User): Enter database username (e.g., `paeteche_user`) and a strong password. Click "Create User".
+5. Step 3 (Add User to Database): Check the box "ALL PRIVILEGES".
+6. Click "Make Changes". Note down the Database Name, Username, and Password!
+
+--------------------------------------------------------------------------------
+STEP 2: IMPORT DATABASE SCHEMA
+--------------------------------------------------------------------------------
+1. Return to cPanel Home -> Click "phpMyAdmin" under Databases.
+2. Select your newly created database (e.g., `paeteche_db`) on the left column.
+3. Click the "Import" tab at the top menu.
+4. Click "Choose File" and upload `database/schema.sql`.
+5. Click "Import" / "Go" at the bottom.
+6. (Optional) Repeat the step for `database/seed.sql` if you wish to load default demo data.
+
+--------------------------------------------------------------------------------
+STEP 3: UPLOAD PROJECT FILES TO CPANEL
+--------------------------------------------------------------------------------
+1. Compress your project folder into a ZIP file (e.g. `chess-system.zip`).
+   (Do NOT include temporary test files or local logs).
+2. Open cPanel -> "File Manager".
+3. Navigate to your domain's root folder:
+   - For primary domain: `public_html/`
+   - For a subdomain/subfolder: `public_html/chess/`
+4. Click "Upload" at the top and select `chess-system.zip`.
+5. Once uploaded, select `chess-system.zip` in File Manager and click "Extract".
+
+--------------------------------------------------------------------------------
+STEP 4: CONFIGURE PUBLIC DIRECTORY & WEB ROOT
+--------------------------------------------------------------------------------
+For security, only the `public/` directory should be accessible via web browsers.
+
+Option A (Recommended Subdomain Setup):
+- Point your subdomain (e.g. `tournament.paetechess.com`) document root directly to `public_html/chess/public/`.
+
+Option B (Subfolder Setup via .htaccess):
+If running inside `public_html/chess/`, create a `.htaccess` file in `public_html/chess/` containing:
+
+   <IfModule mod_rewrite.c>
+       RewriteEngine On
+       RewriteRule ^$ public/ [L]
+       RewriteRule (.*) public/$1 [L]
+   </IfModule>
+
+--------------------------------------------------------------------------------
+STEP 5: UPDATE PRODUCTION DATABASE CREDENTIALS
+--------------------------------------------------------------------------------
+Open `config/database.php` in cPanel File Manager Code Editor and set your live credentials:
+
+   'db' => [
+       'driver' => 'mysql',
+       'host' => 'localhost',
+       'port' => 3306,
+       'dbname' => 'paeteche_db',
+       'user' => 'paeteche_user',
+       'pass' => 'YourStrongPassword123!',
+   ]
+
+Ensure the PHP timezone is set to `Asia/Manila`:
+   'app' => [
+       'timezone' => 'Asia/Manila',
+   ]
+
+--------------------------------------------------------------------------------
+STEP 6: SECURE DIRECTORY PERMISSIONS
+--------------------------------------------------------------------------------
+Set appropriate permissions in cPanel File Manager:
+- Folders: `755`
+- Files: `644`
+- Ensure `storage/` directory is writable (`755` or `777` if required).
+
+--------------------------------------------------------------------------------
+STEP 7: VERIFY LIVE DEPLOYMENT
+--------------------------------------------------------------------------------
+1. Visit your live domain URL in a browser (e.g. `https://paetechess.com/tournament/`).
+2. Verify that the login page loads properly.
+3. Log in using default credentials (`admin` / `admin123`).
+4. GO TO ADMIN SETTINGS (`?route=settings`) AND CHANGE THE DEFAULT PASSWORD IMMEDIATELY!
+
+================================================================================
+TROUBLESHOOTING & COMMON ISSUES
+================================================================================
+Q: Blank white page (500 Internal Server Error)?
+A: Check error logs under cPanel -> "Metrics" -> "Errors", or inspect `storage/logs/error.log`. Ensure PHP version is set to PHP 8.2 or PHP 8.3 in cPanel "Select PHP Version".
+
+Q: Database Connection Failed?
+A: Double-check `dbname`, `user`, and `pass` in `config/database.php`. Ensure user has "ALL PRIVILEGES" assigned in MySQL Databases.
+
+Q: CSS or JavaScript icons/styles not loading?
+A: Ensure the server has internet access to load CDN resources (Bootstrap 5 CDN and FontAwesome CDN). If offline, place copies in `public/assets/`.
+
+================================================================================
+TECHNICAL SUPPORT & CONTACT
+================================================================================
+System Developed for: Paete Chess Club, Paete, Laguna, Philippines.
+Time Zone: Asia/Manila (PHT, UTC+8).
+================================================================================
