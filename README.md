@@ -1,170 +1,99 @@
-# Paete Chess Club - Swiss-System Chess Tournament Management System
+# Paete Chess Club — Swiss-System Chess Tournament Management System
 
-A complete, secure, browser-based Swiss-System Chess Tournament Management System custom-built for the Paete Chess Club in Paete, Laguna, Philippines.
+A complete, secure, lightweight, and modern PHP/MySQL browser-based **Swiss-System Chess Tournament Management System** custom-designed for the **Paete Chess Club** in Paete, Laguna, Philippines.
 
-## Documentation & SOP References
-- 📖 [Standard Operating Procedures (SOP) & Tournament Manual](docs/SOP_MANUAL.md)
-- 🎓 [Volunteer Arbiter Step-by-Step Tutorial & Training Guide](docs/ARBITER_TUTORIAL.md)
-
----
-
-## Technology Stack
-- **Backend**: PHP 8.2+ (Clean MVC & Service Pattern)
-- **Database Access**: PDO with Prepared Statements (MySQL 8.0+ / MariaDB and SQLite3 fallback for local testing)
-- **Frontend**: HTML5, CSS3, JavaScript, Bootstrap 5, FontAwesome Icons
-- **Time Zone**: Asia/Manila
-- **Public Root**: `public/`
-
----
-
-## Directory Structure
-```
-chess-tournament/
-    app/
-        Controllers/
-            AuthController.php
-            DashboardController.php
-            TournamentController.php
-            PlayerController.php
-            PairingController.php
-            StandingsController.php
-            ExportController.php
-        Services/
-            Database.php
-            AuthManager.php
-            PlayerService.php
-            TournamentService.php
-            PairingEngine.php
-            ScoringService.php
-            AuditLogger.php
-            CsvService.php
-        Views/
-            auth/
-            dashboard/
-            tournaments/
-            players/
-            pairings/
-            standings/
-            layouts/
-    config/
-        database.php
-    database/
-        schema.sql          # MySQL / MariaDB schema
-        schema_sqlite.sql   # SQLite schema
-        seed.sql            # Seed data (Default admin account)
-    docs/
-        SOP_MANUAL.md       # Official Standard Operating Procedures & Rules
-        ARBITER_TUTORIAL.md # Step-by-Step Training Guide for Volunteer Arbiters
-    public/
-        index.php           # Front Controller & Router
-        assets/
-            css/
-                style.css   # Chess-inspired theme & A4 print CSS
-            js/
-                app.js      # Player history modal & interactive features
-    storage/
-        db/                 # SQLite database storage (if used)
-        logs/
-    tests/
-        RunTests.php        # Comprehensive automated test suite (Scenarios 1-13)
-    README.md
-```
+The application allows tournament directors and arbiters to manage player rosters, generate round-by-round Swiss pairings, record match results, calculate FIDE-compliant tiebreak standings, inspect full audit logs, and export printable reports and CSV files.
 
 ---
 
 ## Key Features
 
-### 1. Tournament Dashboard
-- Real-time tournament statistics (total registered players, rated vs unrated count, current round vs total rounds, completed vs pending games, byes count, current leader).
-- Quick action controls: Create Tournament, Manage Players, Generate Pairings, Enter Results, View Standings, Print Summary, Export Standings CSV, Finalize/Reopen Tournament.
+1. **Dashboard & Event Management**
+   - Displays real-time tournament statistics: Total Players, Rated vs Unrated counts, Active Round, Completed vs Pending Games, Byes Awarded, and Tournament Leaders.
+   - Status workflow: `Draft` &rarr; `Registration Open` &rarr; `In Progress` &rarr; `Completed` &rarr; `Archived`.
+   - Tournament status lock and administrative reopening with full audit logging.
 
-### 2. Player Management & Registration
-- Individual player registration with FIDE ID, NCFP National Rating, Club Rating, Age, and School/Organization fields.
-- Support for **Unrated Players** without inventing artificial ratings.
-- **Bulk Import**: Import players by pasting a list of names or uploading a CSV file (`Name, Rating, School, Age`). Includes automatic duplicate detection and preview.
-- Initial seeding freezing (Rating descending then Alphabetical).
+2. **Swiss-System Pairing Engine ("Club Swiss — Dutch Variant")**
+   - Score group matching with downfloater tracking.
+   - Strict non-repeat opponent checks.
+   - White vs Black color balance allocation and preference rules.
+   - Automatic 1.0-point Swiss Bye assignment for odd player counts without creating fictional played games.
 
-### 3. Genuine Swiss Pairing Engine ("Club Swiss Pairing — Simplified (Dutch Variant)")
-- Groups players into score groups descending.
-- Handles odd participant counts by assigning 1.0-point Swiss Byes to eligible lower-seeded/scoring players who haven't received a bye.
-- Downfloater logic and strict non-repeat opponent checking.
-- Color balance and allocation control (alternating colors, preventing >=3 consecutive same colors, minimizing color differences).
-- Protection against generating duplicate rounds or pairing new rounds with unresolved matches.
+3. **Player Registration & Bulk Import**
+   - Individual player registration with FIDE, National (NCFP), and Club rating support.
+   - Unrated players are preserved as unrated without assigning fake artificial ratings.
+   - Bulk text-area paste import (`Juan Dela Cruz, 1800, Paete High, 16`).
+   - Bulk CSV file import with duplicate detection.
 
-### 4. Result Recording & Automatic Standings
-- Supported outcomes: `1-0`, `0-1`, `½-½`, `1-0F` (White Win by Forfeit), `0-1F` (Black Win by Forfeit), `0-0F` (Double Forfeit).
-- Distinguishes between played games and forfeits/byes for tiebreak accuracy.
-- Centralized Scoring Service calculates cumulative standings and tiebreaks:
-  1. Buchholz Cut-1
-  2. Buchholz (Total)
-  3. Sonneborn-Berger
-  4. Progressive Score
-  5. Direct Encounter
-  6. Win Count & Most Black Wins
-- Champion and Podium finisher panel display on tournament completion.
+4. **Result Recording & Forfeits**
+   - Supported results: `1-0` (White Win), `0-1` (Black Win), `½-½` (Draw), `1-0F` (White Forfeit Win), `0-1F` (Black Forfeit Win), `0-0F` (Double Forfeit).
+   - Played games vs unplayed forfeit tracking for accurate tiebreak calculations.
+   - Administrative result corrections with audit logging.
 
-### 5. Audit Logging & Security
-- Mandatory audit logging for result modifications, pairing overrides, and administrative tournament reopenings.
-- CSRF token validation on all state-changing forms.
-- Password hashing using `password_hash()` (BCRYPT) and verification with `password_verify()`.
-- XSS prevention via HTML output escaping (`htmlspecialchars`).
+5. **Automatic Tiebreak Standings**
+   - FIDE-compliant tiebreaks:
+     1. Buchholz Cut-1
+     2. Buchholz Total
+     3. Sonneborn-Berger
+     4. Progressive Score
+     5. Direct Encounter
+     6. Win Count
+     7. Most Black Wins
 
-### 6. Printing & CSV Exports
-- A4 printer-friendly layout for pairing boards, result sheets, player cards, and standings.
-- One-click CSV exports for player rosters and standings tables.
+6. **Admin Settings & Security**
+   - BCRYPT password hashing and secure authorization checks.
+   - PDO prepared statements across all database interactions.
+   - Session protection and CSRF token verification.
+   - Arbiter security profile management (password change and full name/username update).
+   - System audit trail log viewer.
+
+7. **Documentation & Printing**
+   - Printer-friendly layout with `@media print` rules for A4 paper export.
+   - CSV exports for standings and player lists.
+   - Complete Standard Operating Procedures (`docs/SOP_MANUAL.md`).
+   - Step-by-step Arbiter Training Tutorial (`docs/ARBITER_TUTORIAL.md`).
+   - Detailed Installation Guide for Localhost and cPanel (`INSTALLATION_TUTORIAL.txt`).
 
 ---
 
-## Installation & Setup Instructions
+## Tech Stack & System Requirements
 
-### Local Development / SQLite Setup
-1. Ensure PHP 8.2 or later is installed with PDO SQLite support.
-2. Initialize SQLite schema and seed default admin:
-   ```bash
-   php -r "
-   require_once 'app/Services/Database.php';
-   \$pdo = App\Services\Database::getInstance();
-   \$pdo->exec(file_get_contents('database/schema_sqlite.sql'));
-   \$pdo->exec(file_get_contents('database/seed.sql'));
-   "
-   ```
-3. Start local PHP server:
+- **PHP**: PHP 8.2 or higher
+- **Database**: MySQL 8.0+, MariaDB 10.3+, or SQLite3
+- **Frontend**: HTML5, CSS3, JavaScript (Vanilla ES6), Bootstrap 5.3, FontAwesome 6
+- **Architecture**: MVC & Service Pattern using Object-Oriented PHP
+- **Timezone**: `Asia/Manila` (PHT, UTC+8)
+
+---
+
+## Quick Local Installation Guide
+
+1. Clone or extract the project repository into your web root or project directory.
+2. Start the built-in PHP development server:
    ```bash
    php -S 127.0.0.1:8000 -t public/
    ```
-4. Access in browser at `http://127.0.0.1:8000`.
-
-### Production / cPanel Hosting Setup (MySQL / MariaDB)
-1. Log in to cPanel and open **MySQL Database Wizard**.
-2. Create a new database (e.g., `paetecc_chess`) and MySQL user with full privileges.
-3. Open **phpMyAdmin**, select the created database, and import `database/schema.sql` followed by `database/seed.sql`.
-4. Upload project files to hosting environment. Point document root to `public/` directory.
-5. Update database environment variables or edit `config/database.php`:
-   ```php
-   'db' => [
-       'driver' => 'mysql',
-       'host' => '127.0.0.1',
-       'port' => '3306',
-       'dbname' => 'paetecc_chess',
-       'user' => 'your_db_username',
-       'pass' => 'your_db_password',
-   ]
+3. Open your web browser and navigate to:
    ```
+   http://127.0.0.1:8000
+   ```
+4. Log in using default arbiter credentials:
+   - **Username**: `admin`
+   - **Password**: `admin123`
 
 ---
 
-## Admin Credentials
-- **Username**: `admin`
-- **Password**: `admin123`
+## Running Automated Tests
 
----
-
-## Automated Test Suite
-
-Run all 13 test scenarios covering pairing logic, odd counts, unrated players, color balance, forfeits, result corrections, and persistence:
+Run the 13-scenario automated test suite to verify pairing logic, scoring calculations, forfeit handling, result corrections, and audit logging:
 
 ```bash
 php tests/RunTests.php
 ```
 
-All 16 assertions across Scenarios 1 through 13 pass with 100% success rate.
+---
+
+## License & Support
+
+Developed for the **Paete Chess Club**, Paete, Laguna, Philippines.
+All rights reserved.

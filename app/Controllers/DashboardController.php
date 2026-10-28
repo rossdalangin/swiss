@@ -32,6 +32,8 @@ class DashboardController {
             $tournament = $this->tournamentService->getTournament((int)$tournaments[0]['id']);
         }
 
+        $allTournaments = $tournaments;
+
         $stats = [
             'total_players' => 0,
             'rated_players' => 0,
@@ -41,7 +43,9 @@ class DashboardController {
             'completed_games' => 0,
             'pending_games' => 0,
             'byes_count' => 0,
+            'total_byes' => 0,
             'leader' => 'None',
+            'leader_name' => 'None',
             'status' => 'Draft'
         ];
 
@@ -89,7 +93,9 @@ class DashboardController {
             $standings = $this->scoringService->getStandings($tId);
             if (!empty($standings)) {
                 $stats['leader'] = $standings[0]['full_name'] . ' (' . $standings[0]['points'] . ' pts)';
+                $stats['leader_name'] = $standings[0]['full_name'] . ' (' . $standings[0]['points'] . ' pts)';
             }
+            $stats['total_byes'] = $stats['byes_count'];
         }
 
         require __DIR__ . '/../Views/dashboard/index.php';

@@ -92,3 +92,37 @@ Stack trace:
 [Tue Oct 27 15:57:04 2026] 127.0.0.1:53964 Closing
 [Tue Oct 27 15:57:04 2026] 127.0.0.1:53968 [200]: GET /assets/js/app.js
 [Tue Oct 27 15:57:04 2026] 127.0.0.1:53968 Closing
+[Wed Oct 28 09:29:44 2026] 127.0.0.1:41396 Accepted
+[Wed Oct 28 09:29:44 2026] 127.0.0.1:41396 [200]: GET /index.php?route=login
+[Wed Oct 28 09:29:44 2026] 127.0.0.1:41396 Closing
+[Wed Oct 28 09:29:44 2026] 127.0.0.1:41408 Accepted
+[Wed Oct 28 09:29:44 2026] 127.0.0.1:41424 Accepted
+[Wed Oct 28 09:29:44 2026] 127.0.0.1:41408 [200]: GET /assets/css/style.css
+[Wed Oct 28 09:29:44 2026] 127.0.0.1:41408 Closing
+[Wed Oct 28 09:29:44 2026] 127.0.0.1:41424 [200]: GET /assets/js/app.js
+[Wed Oct 28 09:29:44 2026] 127.0.0.1:41424 Closing
+[Wed Oct 28 09:29:46 2026] 127.0.0.1:41436 Accepted
+[Wed Oct 28 09:29:46 2026] 127.0.0.1:41436 [302]: POST /index.php?route=login
+[Wed Oct 28 09:29:46 2026] 127.0.0.1:41436 Closing
+[Wed Oct 28 09:29:46 2026] 127.0.0.1:41448 Accepted
+[Wed Oct 28 09:29:46 2026] PHP Warning:  Undefined variable $allTournaments in /app/app/Views/dashboard/index.php on line 28
+[Wed Oct 28 09:29:46 2026] PHP Warning:  foreach() argument must be of type array|object, null given in /app/app/Views/dashboard/index.php on line 28
+[Wed Oct 28 09:29:46 2026] PHP Warning:  Undefined array key "leader_name" in /app/app/Views/dashboard/index.php on line 81
+[Wed Oct 28 09:29:46 2026] PHP Warning:  Undefined array key "total_byes" in /app/app/Views/dashboard/index.php on line 82
+[Wed Oct 28 09:29:46 2026] 127.0.0.1:41448 [200]: GET /index.php?route=dashboard
+[Wed Oct 28 09:29:46 2026] 127.0.0.1:41448 Closing
+[Wed Oct 28 09:29:46 2026] 127.0.0.1:41460 Accepted
+[Wed Oct 28 09:29:46 2026] 127.0.0.1:41464 Accepted
+[Wed Oct 28 09:29:46 2026] 127.0.0.1:41460 [200]: GET /assets/css/style.css
+[Wed Oct 28 09:29:46 2026] 127.0.0.1:41464 [200]: GET /assets/js/app.js
+[Wed Oct 28 09:29:46 2026] 127.0.0.1:41460 Closing
+[Wed Oct 28 09:29:46 2026] 127.0.0.1:41464 Closing
+[Wed Oct 28 09:29:46 2026] 127.0.0.1:41474 Accepted
+[Wed Oct 28 09:29:46 2026] 127.0.0.1:41474 [200]: GET /index.php?route=settings
+[Wed Oct 28 09:29:46 2026] 127.0.0.1:41474 Closing
+[Wed Oct 28 09:29:46 2026] 127.0.0.1:41480 Accepted
+[Wed Oct 28 09:29:46 2026] 127.0.0.1:41490 Accepted
+[Wed Oct 28 09:29:46 2026] 127.0.0.1:41480 [200]: GET /assets/css/style.css
+[Wed Oct 28 09:29:46 2026] 127.0.0.1:41490 [200]: GET /assets/js/app.js
+[Wed Oct 28 09:29:46 2026] 127.0.0.1:41480 Closing
+[Wed Oct 28 09:29:46 2026] 127.0.0.1:41490 Closing

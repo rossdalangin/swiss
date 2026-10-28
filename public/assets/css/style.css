@@ -1,116 +1,207 @@
+/* Custom CSS Stylesheet for Paete Chess Club Tournament Management System */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
 :root {
-    --pcc-primary: #2c3e50;
-    --pcc-secondary: #8e44ad;
-    --pcc-accent: #d35400;
-    --pcc-light: #f8f9fa;
-    --pcc-dark: #1a252f;
-    --pcc-gold: #f39c12;
-    --pcc-board-light: #f0d9b5;
-    --pcc-board-dark: #b58863;
+    --pcc-emerald-dark: #0f2d1e;
+    --pcc-emerald: #1e3a2b;
+    --pcc-emerald-light: #2d5a42;
+    --pcc-gold: #d4af37;
+    --pcc-gold-hover: #b89628;
+    --pcc-gold-light: #fef9e7;
+    --pcc-dark-slate: #0f172a;
+    --pcc-soft-bg: #f8fafc;
+    --pcc-card-bg: #ffffff;
+    --pcc-border-color: #e2e8f0;
 }
 
 body {
-    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-    background-color: #f4f6f9;
-    color: #333;
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: var(--pcc-soft-bg);
+    color: #334155;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
+main {
+    flex: 1 0 auto;
+}
+
+/* Navbar Styling */
 .navbar-pcc {
-    background: linear-gradient(135deg, #1a252f 0%, #2c3e50 100%);
+    background: linear-gradient(135deg, var(--pcc-emerald-dark) 0%, var(--pcc-emerald) 60%, var(--pcc-emerald-light) 100%);
     border-bottom: 3px solid var(--pcc-gold);
+    box-shadow: 0 4px 15px rgba(15, 45, 30, 0.25);
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
 }
 
 .pcc-brand-title {
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    color: #fff;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    font-size: 1.35rem;
+    color: #ffffff !important;
 }
 
+.navbar-dark .navbar-nav .nav-link {
+    color: rgba(255, 255, 255, 0.85);
+    font-weight: 600;
+    font-size: 0.95rem;
+    padding: 0.5rem 0.85rem;
+    border-radius: 0.375rem;
+    transition: all 0.2s ease-in-out;
+}
+
+.navbar-dark .navbar-nav .nav-link:hover,
+.navbar-dark .navbar-nav .nav-link.active {
+    color: var(--pcc-gold) !important;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+/* Card Enhancements */
 .pcc-card {
-    border: none;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-    background: #fff;
-    margin-bottom: 1.5rem;
+    border: 1px solid var(--pcc-border-color);
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    background-color: var(--pcc-card-bg);
 }
 
 .pcc-card-header {
-    background-color: #fff;
-    border-bottom: 2px solid #edf2f7;
-    font-weight: 600;
-    padding: 1rem 1.25rem;
-    border-radius: 8px 8px 0 0 !important;
-}
-
-.board-badge {
-    background: var(--pcc-primary);
-    color: #fff;
+    border-top-left-radius: 0.75rem !important;
+    border-top-right-radius: 0.75rem !important;
+    background: linear-gradient(135deg, var(--pcc-dark-slate) 0%, #1e293b 100%);
+    color: #ffffff;
     font-weight: 700;
-    width: 36px;
-    height: 36px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
 }
 
-.champion-card {
-    background: linear-gradient(135deg, #fff9e6 0%, #fff3cd 100%);
+/* Stat Widgets */
+.stat-widget {
+    border-radius: 0.75rem;
+    padding: 1.25rem;
+    background-color: #ffffff;
+    border-left: 5px solid var(--pcc-emerald);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.stat-widget.stat-widget-gold {
+    border-left-color: var(--pcc-gold);
+}
+
+.stat-widget.stat-widget-info {
+    border-left-color: #0284c7;
+}
+
+.stat-widget.stat-widget-success {
+    border-left-color: #16a34a;
+}
+
+.stat-widget-title {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #64748b;
+}
+
+.stat-widget-value {
+    font-size: 1.85rem;
+    font-weight: 800;
+    color: var(--pcc-dark-slate);
+    line-height: 1.2;
+}
+
+/* Buttons */
+.btn-pcc-gold {
+    background-color: var(--pcc-gold);
+    color: #000000;
+    font-weight: 700;
+    border: none;
+    box-shadow: 0 2px 6px rgba(212, 175, 55, 0.3);
+    transition: all 0.2s ease;
+}
+
+.btn-pcc-gold:hover {
+    background-color: var(--pcc-gold-hover);
+    color: #000000;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(212, 175, 55, 0.4);
+}
+
+.btn-pcc-emerald {
+    background-color: var(--pcc-emerald);
+    color: #ffffff;
+    font-weight: 700;
+    border: none;
+    transition: all 0.2s ease;
+}
+
+.btn-pcc-emerald:hover {
+    background-color: var(--pcc-emerald-dark);
+    color: #ffffff;
+    transform: translateY(-1px);
+}
+
+/* Table Styling */
+.table-pcc {
+    background-color: #ffffff;
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+.table-pcc thead th {
+    background-color: #f1f5f9;
+    color: #334155;
+    font-weight: 700;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    border-bottom: 2px solid var(--pcc-border-color);
+    padding: 0.85rem 1rem;
+}
+
+.table-pcc tbody td {
+    padding: 0.85rem 1rem;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--pcc-border-color);
+}
+
+.table-pcc tbody tr:hover {
+    background-color: #f8fafc;
+}
+
+/* Champion Banner */
+.champion-banner {
+    background: linear-gradient(135deg, #fef9e7 0%, #fff3c4 100%);
     border: 2px solid var(--pcc-gold);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);
 }
 
-/* Chess subtle board watermark or accent */
-.chess-accent-border {
-    border-left: 4px solid var(--pcc-gold);
-}
-
-/* Print CSS Stylesheet */
+/* Print Rules */
 @media print {
-    body {
-        background: #fff !important;
-        color: #000 !important;
-        font-size: 12pt;
-    }
-
-    .no-print, .navbar, .btn, footer, .modal, .alert {
+    .no-print {
         display: none !important;
     }
-
+    body {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+        font-size: 11pt;
+    }
     .container, .container-fluid {
         width: 100% !important;
-        max-width: 100% !important;
-        margin: 0 !important;
         padding: 0 !important;
+        margin: 0 !important;
     }
-
-    .card {
+    .pcc-card {
         border: none !important;
         box-shadow: none !important;
     }
-
-    .table {
-        width: 100% !important;
-        border-collapse: collapse !important;
-    }
-
-    .table th, .table td {
-        border: 1px solid #000 !important;
-        padding: 6px !important;
-    }
-
-    .print-header {
-        display: block !important;
-        text-align: center;
-        margin-bottom: 20px;
-    }
-
-    .print-header h2 {
-        margin: 0;
-        font-size: 18pt;
-    }
-
-    @page {
-        size: A4 portrait;
-        margin: 1.5cm;
+    .table-pcc thead th {
+        background-color: #e2e8f0 !important;
+        color: #000000 !important;
     }
 }

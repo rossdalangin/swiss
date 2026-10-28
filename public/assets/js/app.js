@@ -1,3 +1,7 @@
+function showPlayerHistory(playerId, tournamentId) {
+    return viewPlayerHistory(tournamentId, playerId);
+}
+
 function viewPlayerHistory(tournamentId, playerId) {
     const modalEl = document.getElementById('playerHistoryModal');
     if (!modalEl) return;

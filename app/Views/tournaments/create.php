@@ -8,7 +8,7 @@ require __DIR__ . '/../layouts/header.php';
         <div class="card pcc-card shadow">
             <div class="card-header pcc-card-header bg-dark text-white d-flex align-items-center">
                 <i class="fa-solid fa-trophy text-warning fa-lg me-2"></i>
-                <h4 class="mb-0">Create New Swiss Tournament</h4>
+                <h4 class="mb-0 fw-bold">Create New Swiss Tournament</h4>
             </div>
             <div class="card-body p-4">
                 <?php if (!empty($error)): ?>

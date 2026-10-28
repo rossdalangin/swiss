@@ -93,8 +93,8 @@ class TournamentController {
     public function reopen(): void {
         AuthManager::requireLogin();
         $id = (int)($_GET['id'] ?? 0);
-        $token = $_POST['csrf_token'] ?? '';
-        $reason = trim($_POST['reason'] ?? 'Administrative reopen');
+        $token = $_GET['csrf_token'] ?? $_POST['csrf_token'] ?? '';
+        $reason = trim($_REQUEST['reason'] ?? 'Administrative reopen');
 
         if (AuthManager::verifyCsrfToken($token)) {
             $this->tournamentService->updateTournamentStatus($id, 'In Progress');
