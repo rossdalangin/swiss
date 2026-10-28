@@ -251,6 +251,21 @@ class ScoringService {
         unset($s);
 
         // Direct Encounter tiebreak calculation for tied players
+        foreach ($stats as $pid1 => &$s1) {
+            foreach ($stats as $pid2 => $s2) {
+                if ($pid1 === $pid2) continue;
+                if (isset($s1['opponents_results'][$pid2])) {
+                    $res = $s1['opponents_results'][$pid2];
+                    if ($res === 'W') {
+                        $s1['tb_direct_encounter'] += 1.0;
+                    } elseif ($res === 'D') {
+                        $s1['tb_direct_encounter'] += 0.5;
+                    }
+                }
+            }
+        }
+        unset($s1);
+
         // Convert to array for sorting
         $standingsList = array_values($stats);
 
@@ -274,6 +289,9 @@ class ScoringService {
                 if ($tb === 'progressive' && $a['tb_progressive'] != $b['tb_progressive']) {
                     return $b['tb_progressive'] <=> $a['tb_progressive'];
                 }
+                if ($tb === 'direct_encounter' && $a['tb_direct_encounter'] != $b['tb_direct_encounter']) {
+                    return $b['tb_direct_encounter'] <=> $a['tb_direct_encounter'];
+                }
                 if ($tb === 'wins' && $a['wins'] != $b['wins']) {
                     return $b['wins'] <=> $a['wins'];
                 }
@@ -286,101 +304,83 @@ class ScoringService {
             return $a['initial_seed'] <=> $b['initial_seed'];
         });
 
-        // Assign ranks (1..N) and save to DB
-        $stmtSave = $this->db->prepare("
-            INSERT INTO tournament_standings (
-                tournament_id, player_id, rank, points, played_games, wins, draws, losses, byes,
-                tb_buchholz_cut1, tb_buchholz, tb_sonneborn_berger, tb_progressive, tb_direct_encounter,
-                tb_wins, tb_black_wins
-            ) VALUES (
-                :t_id, :p_id, :rank, :pts, :played, :wins, :draws, :losses, :byes,
-                :cut1, :buchholz, :sb, :prog, :de, :tb_wins, :black_wins
-            ) ON CONFLICT(tournament_id, player_id) DO UPDATE SET
-                rank = EXCLUDED.rank,
-                points = EXCLUDED.points,
-                played_games = EXCLUDED.played_games,
-                wins = EXCLUDED.wins,
-                draws = EXCLUDED.draws,
-                losses = EXCLUDED.losses,
-                byes = EXCLUDED.byes,
-                tb_buchholz_cut1 = EXCLUDED.tb_buchholz_cut1,
-                tb_buchholz = EXCLUDED.tb_buchholz,
-                tb_sonneborn_berger = EXCLUDED.tb_sonneborn_berger,
-                tb_progressive = EXCLUDED.tb_progressive,
-                tb_direct_encounter = EXCLUDED.tb_direct_encounter,
-                tb_wins = EXCLUDED.tb_wins,
-                tb_black_wins = EXCLUDED.tb_black_wins
-        ");
+        // Determine DB driver
+        $driverName = $this->db->getAttribute(PDO::ATTR_DRIVER_NAME);
+
+        if ($driverName === 'sqlite') {
+            $stmtSave = $this->db->prepare("
+                INSERT INTO tournament_standings (
+                    tournament_id, player_id, rank, points, played_games, wins, draws, losses, byes,
+                    tb_buchholz_cut1, tb_buchholz, tb_sonneborn_berger, tb_progressive, tb_direct_encounter,
+                    tb_wins, tb_black_wins
+                ) VALUES (
+                    :t_id, :p_id, :rank, :pts, :played, :wins, :draws, :losses, :byes,
+                    :cut1, :buchholz, :sb, :prog, :de, :tb_wins, :black_wins
+                ) ON CONFLICT(tournament_id, player_id) DO UPDATE SET
+                    rank = EXCLUDED.rank,
+                    points = EXCLUDED.points,
+                    played_games = EXCLUDED.played_games,
+                    wins = EXCLUDED.wins,
+                    draws = EXCLUDED.draws,
+                    losses = EXCLUDED.losses,
+                    byes = EXCLUDED.byes,
+                    tb_buchholz_cut1 = EXCLUDED.tb_buchholz_cut1,
+                    tb_buchholz = EXCLUDED.tb_buchholz,
+                    tb_sonneborn_berger = EXCLUDED.tb_sonneborn_berger,
+                    tb_progressive = EXCLUDED.tb_progressive,
+                    tb_direct_encounter = EXCLUDED.tb_direct_encounter,
+                    tb_wins = EXCLUDED.tb_wins,
+                    tb_black_wins = EXCLUDED.tb_black_wins
+            ");
+        } else {
+            $stmtSave = $this->db->prepare("
+                INSERT INTO tournament_standings (
+                    tournament_id, player_id, rank, points, played_games, wins, draws, losses, byes,
+                    tb_buchholz_cut1, tb_buchholz, tb_sonneborn_berger, tb_progressive, tb_direct_encounter,
+                    tb_wins, tb_black_wins
+                ) VALUES (
+                    :t_id, :p_id, :rank, :pts, :played, :wins, :draws, :losses, :byes,
+                    :cut1, :buchholz, :sb, :prog, :de, :tb_wins, :black_wins
+                ) ON DUPLICATE KEY UPDATE
+                    rank = VALUES(rank),
+                    points = VALUES(points),
+                    played_games = VALUES(played_games),
+                    wins = VALUES(wins),
+                    draws = VALUES(draws),
+                    losses = VALUES(losses),
+                    byes = VALUES(byes),
+                    tb_buchholz_cut1 = VALUES(tb_buchholz_cut1),
+                    tb_buchholz = VALUES(tb_buchholz),
+                    tb_sonneborn_berger = VALUES(tb_sonneborn_berger),
+                    tb_progressive = VALUES(tb_progressive),
+                    tb_direct_encounter = VALUES(tb_direct_encounter),
+                    tb_wins = VALUES(tb_wins),
+                    tb_black_wins = VALUES(tb_black_wins)
+            ");
+        }
 
         $rank = 1;
         foreach ($standingsList as &$item) {
             $item['rank'] = $rank;
 
-            // Execute insert or update query (fallback compatible with SQLite ON CONFLICT and MySQL ON DUPLICATE)
-            try {
-                $stmtSave->execute([
-                    ':t_id' => $tournamentId,
-                    ':p_id' => $item['player_id'],
-                    ':rank' => $rank,
-                    ':pts' => $item['points'],
-                    ':played' => $item['played_games'],
-                    ':wins' => $item['wins'],
-                    ':draws' => $item['draws'],
-                    ':losses' => $item['losses'],
-                    ':byes' => $item['byes'],
-                    ':cut1' => $item['tb_buchholz_cut1'],
-                    ':buchholz' => $item['tb_buchholz'],
-                    ':sb' => $item['tb_sonneborn_berger'],
-                    ':prog' => $item['tb_progressive'],
-                    ':de' => $item['tb_direct_encounter'],
-                    ':tb_wins' => $item['wins'],
-                    ':black_wins' => $item['black_wins'],
-                ]);
-            } catch (\Exception $e) {
-                // MySQL fallback if ON CONFLICT syntax differs
-                $mySqlSave = $this->db->prepare("
-                    INSERT INTO tournament_standings (
-                        tournament_id, player_id, rank, points, played_games, wins, draws, losses, byes,
-                        tb_buchholz_cut1, tb_buchholz, tb_sonneborn_berger, tb_progressive, tb_direct_encounter,
-                        tb_wins, tb_black_wins
-                    ) VALUES (
-                        :t_id, :p_id, :rank, :pts, :played, :wins, :draws, :losses, :byes,
-                        :cut1, :buchholz, :sb, :prog, :de, :tb_wins, :black_wins
-                    ) ON DUPLICATE KEY UPDATE
-                        rank = VALUES(rank),
-                        points = VALUES(points),
-                        played_games = VALUES(played_games),
-                        wins = VALUES(wins),
-                        draws = VALUES(draws),
-                        losses = VALUES(losses),
-                        byes = VALUES(byes),
-                        tb_buchholz_cut1 = VALUES(tb_buchholz_cut1),
-                        tb_buchholz = VALUES(tb_buchholz),
-                        tb_sonneborn_berger = VALUES(tb_sonneborn_berger),
-                        tb_progressive = VALUES(tb_progressive),
-                        tb_direct_encounter = VALUES(tb_direct_encounter),
-                        tb_wins = VALUES(tb_wins),
-                        tb_black_wins = VALUES(tb_black_wins)
-                ");
-                $mySqlSave->execute([
-                    ':t_id' => $tournamentId,
-                    ':p_id' => $item['player_id'],
-                    ':rank' => $rank,
-                    ':pts' => $item['points'],
-                    ':played' => $item['played_games'],
-                    ':wins' => $item['wins'],
-                    ':draws' => $item['draws'],
-                    ':losses' => $item['losses'],
-                    ':byes' => $item['byes'],
-                    ':cut1' => $item['tb_buchholz_cut1'],
-                    ':buchholz' => $item['tb_buchholz'],
-                    ':sb' => $item['tb_sonneborn_berger'],
-                    ':prog' => $item['tb_progressive'],
-                    ':de' => $item['tb_direct_encounter'],
-                    ':tb_wins' => $item['wins'],
-                    ':black_wins' => $item['black_wins'],
-                ]);
-            }
+            $stmtSave->execute([
+                ':t_id' => $tournamentId,
+                ':p_id' => $item['player_id'],
+                ':rank' => $rank,
+                ':pts' => $item['points'],
+                ':played' => $item['played_games'],
+                ':wins' => $item['wins'],
+                ':draws' => $item['draws'],
+                ':losses' => $item['losses'],
+                ':byes' => $item['byes'],
+                ':cut1' => $item['tb_buchholz_cut1'],
+                ':buchholz' => $item['tb_buchholz'],
+                ':sb' => $item['tb_sonneborn_berger'],
+                ':prog' => $item['tb_progressive'],
+                ':de' => $item['tb_direct_encounter'],
+                ':tb_wins' => $item['wins'],
+                ':black_wins' => $item['black_wins'],
+            ]);
 
             $rank++;
         }

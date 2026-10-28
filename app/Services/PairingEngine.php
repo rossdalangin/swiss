@@ -208,6 +208,10 @@ class PairingEngine {
         // Backtracking matching engine to pair players without repeat opponents and balance colors
         $pairedGames = $this->pairPlayersRecursive($players, $roundNumber);
 
+        if (empty($pairedGames) && !empty($players)) {
+            throw new RuntimeException("Unable to generate valid pairings for Round $roundNumber. Unresolvable pairing constraints.");
+        }
+
         return [
             'games' => $pairedGames,
             'bye' => $byePlayer
